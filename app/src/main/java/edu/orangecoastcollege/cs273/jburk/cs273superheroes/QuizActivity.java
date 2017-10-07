@@ -36,7 +36,10 @@ public class QuizActivity extends AppCompatActivity {
     private SecureRandom rng;
     private Handler handler;
 
+    private int gameType = 3;
+
     private TextView mQuestionNumberTextView;
+    private TextView mGuessWhatTextView;
     private ImageView mHeroImageView;
     private TextView mAnswerTextView;
 
@@ -58,6 +61,7 @@ public class QuizActivity extends AppCompatActivity {
         mHeroImageView = (ImageView) findViewById(R.id.heroImageView);
         mQuestionNumberTextView = (TextView) findViewById(R.id.questionNumberTextView);
         mAnswerTextView = (TextView) findViewById(R.id.answerTextView);
+        mGuessWhatTextView = (TextView) findViewById(R.id.guessWhatTextView);
 
         mQuestionNumberTextView.setText(getString(R.string.question, 1, HEROES_IN_QUIZ));
 
@@ -83,6 +87,24 @@ public class QuizActivity extends AppCompatActivity {
             SuperHeroes randomHero = mAllHeroesList.get(randomPosition);
             if (!mQuizHeroesList.contains(randomHero))
                 mQuizHeroesList.add(randomHero);
+        }
+
+        switch (gameType) {
+            case 1: {
+                mGuessWhatTextView.setText(R.string.guess_superhero);
+                break;
+            }
+            case 2: {
+                mGuessWhatTextView.setText(R.string.guess_super_power);
+                break;
+            }
+            case 3: {
+                mGuessWhatTextView.setText(R.string.guess_one_thing);
+                break;
+            }
+            default: {
+                Log.e(TAG, "Game type not valid");
+            }
         }
 
         loadNextHero();
@@ -112,9 +134,42 @@ public class QuizActivity extends AppCompatActivity {
 
         for (int i = 0; i < mButtons.length; i++) {
             mButtons[i].setEnabled(true);
-            mButtons[i].setText(mAllHeroesList.get(i).getName());
+            switch (gameType) {
+                case 1: {
+                    mButtons[i].setText(mAllHeroesList.get(i).getName());
+                    break;
+                }
+                case 2: {
+                    mButtons[i].setText(mAllHeroesList.get(i).getSuperpower());
+                    break;
+                }
+                case 3: {
+                    mButtons[i].setText(mAllHeroesList.get(i).getOneThing());
+                    break;
+                }
+                default: {
+                    Log.e(TAG, "Game type not valid");
+                }
+            }
+
         }
-        mButtons[rng.nextInt(mButtons.length)].setText((mCorrectHero.getName()));
+        switch (gameType) {
+            case 1: {
+                mButtons[rng.nextInt(mButtons.length)].setText(mCorrectHero.getName());
+                break;
+            }
+            case 2: {
+                mButtons[rng.nextInt(mButtons.length)].setText(mCorrectHero.getSuperpower());
+                break;
+            }
+            case 3: {
+                mButtons[rng.nextInt(mButtons.length)].setText(mCorrectHero.getOneThing());
+                break;
+            }
+            default: {
+                Log.e(TAG, "Game type not valid");
+            }
+        }
     }
 
     public void makeGuess(View v) {
@@ -124,12 +179,31 @@ public class QuizActivity extends AppCompatActivity {
 
         mTotalGuesses++;
 
-        if (guess.equals(mCorrectHero.getName())) {
+        String buttonValue = "";
+        switch (gameType) {
+            case 1: {
+                buttonValue = mCorrectHero.getName();
+                break;
+            }
+            case 2: {
+                buttonValue = mCorrectHero.getSuperpower();
+                break;
+            }
+            case 3: {
+                buttonValue = mCorrectHero.getOneThing();
+                break;
+            }
+            default: {
+                Log.e(TAG, "Game type not valid");
+            }
+        }
+
+        if (guess.equals(buttonValue)) {
             for (Button b : mButtons)
                 b.setEnabled(false);
 
             mCorrectGuesses++;
-            mAnswerTextView.setText(mCorrectHero.getName());
+            mAnswerTextView.setText(buttonValue);
             mAnswerTextView.setTextColor(ContextCompat.getColor(this, R.color.correct_answer));
 
             if (mCorrectGuesses < HEROES_IN_QUIZ) {

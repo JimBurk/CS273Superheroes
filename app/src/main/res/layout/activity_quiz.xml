@@ -35,7 +35,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/guess_superhero"
-        android:id="@+id/guessCountryTextView"
+        android:id="@+id/guessWhatTextView"
         android:layout_gravity="center_horizontal"/>
 
     <LinearLayout

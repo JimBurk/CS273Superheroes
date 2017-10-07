@@ -2,6 +2,8 @@
     <string name="app_name">CS273 Superheroes</string>
     <string name="choices">Quiz Type</string>
     <string name="guess_superhero">Which Superhero ?</string>
+    <string name="guess_super_power">What Super Power ?</string>
+    <string name="guess_one_thing">What One Thing ?</string>
     <string name="results">%1$d guesses, %2$.01f%% correct</string>
     <string name="incorrect_answer">Incorrect!</string>
     <string name="restarting_quiz">Quiz will restart with your new settings</string>
