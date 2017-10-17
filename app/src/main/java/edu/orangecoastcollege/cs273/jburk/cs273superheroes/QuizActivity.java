@@ -2,17 +2,23 @@ package edu.orangecoastcollege.cs273.jburk.cs273superheroes;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,6 +26,13 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+/***
+ * Entry point for Superheroes application.
+ *
+ * Written by Jim Burk
+ * October 1t6, 2017
+ */
 
 public class QuizActivity extends AppCompatActivity {
     private static final String TAG = "Superhero Quiz";
@@ -36,23 +49,28 @@ public class QuizActivity extends AppCompatActivity {
     private SecureRandom rng;
     private Handler handler;
 
-    private int gameType = 3;
+    private int gameType = 1;
 
     private TextView mQuestionNumberTextView;
     private TextView mGuessWhatTextView;
     private ImageView mHeroImageView;
     private TextView mAnswerTextView;
 
+    private static final String CHOICES = "pref_quizTypes";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_quiz);
 
         try {
             mAllHeroesList = JSONLoader.loadJSONFromAsset(this);
         } catch (IOException e) {
             Log.e("CS273 Superoes", "Error Loading from JSON", e);
         }
-        setContentView(R.layout.activity_quiz);
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        preferences.registerOnSharedPreferenceChangeListener(mPreferenceChangeListener);
 
         mQuizHeroesList = new ArrayList<>(HEROES_IN_QUIZ);
         rng = new SecureRandom();
@@ -217,7 +235,7 @@ public class QuizActivity extends AppCompatActivity {
             else {
                 // Show an alert dialog and reset quiz
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage(getString(R.string.results, mTotalGuesses, (double) mCorrectGuesses / mTotalGuesses));
+                builder.setMessage(getString(R.string.results, mTotalGuesses, (double) ( 100 * mCorrectGuesses) / mTotalGuesses));
                 builder.setCancelable(false);
                 builder.setPositiveButton(getString(R.string.reset_quiz), new DialogInterface.OnClickListener() {
                     @Override
@@ -226,6 +244,7 @@ public class QuizActivity extends AppCompatActivity {
                     }
                 });
                 builder.create();
+                builder.show();
             }
         }
         else {
@@ -234,4 +253,39 @@ public class QuizActivity extends AppCompatActivity {
             clickedButton.setEnabled(false);
         }
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_settings, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent settingsIntent = new Intent(this, SettingsActivity.class);
+        startActivity(settingsIntent);
+        return super.onOptionsItemSelected(item);
+    }
+
+    SharedPreferences.OnSharedPreferenceChangeListener mPreferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            // lets figure out which key changed
+            switch (key) {
+                case CHOICES:
+                    // read number of choices from shared preferences
+                    String gameString = sharedPreferences.getString(CHOICES, "Superhero Name");
+                    if (gameString.equals("Superhero Name"))
+                        gameType = 1;
+                    else if (gameString.equals("Superpower"))
+                        gameType = 2;
+                    else
+                        gameType = 3;
+
+                    resetQuiz();
+                    break;
+            }
+            Toast.makeText(QuizActivity.this, R.string.restarting_quiz, Toast.LENGTH_SHORT).show();
+        }
+    };
 }

@@ -9,4 +9,9 @@
     <string name="restarting_quiz">Quiz will restart with your new settings</string>
     <string name="question">Question %1$d of %2$d</string>
     <string name="reset_quiz">Reset Quiz</string>
+    <string name="exit_quiz">Exit Quiz</string>
+
+    <string name="quiz_type_text">Quiz Type</string>
+    <string name="choices_text">Choose superhero name, superhero power or one thing about them.</string>
+    <string name="default_value">Superhero Name</string>
 </resources>
