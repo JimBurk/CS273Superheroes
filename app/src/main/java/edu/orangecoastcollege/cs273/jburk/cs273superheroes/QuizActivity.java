@@ -271,9 +271,7 @@ public class QuizActivity extends AppCompatActivity {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             // lets figure out which key changed
-            switch (key) {
-                case CHOICES:
-                    // read number of choices from shared preferences
+            if (key.equals(CHOICES)) {
                     String gameString = sharedPreferences.getString(CHOICES, "Superhero Name");
                     if (gameString.equals("Superhero Name"))
                         gameType = 1;
@@ -283,7 +281,6 @@ public class QuizActivity extends AppCompatActivity {
                         gameType = 3;
 
                     resetQuiz();
-                    break;
             }
             Toast.makeText(QuizActivity.this, R.string.restarting_quiz, Toast.LENGTH_SHORT).show();
         }
