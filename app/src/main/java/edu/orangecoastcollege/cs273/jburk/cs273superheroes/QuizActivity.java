@@ -15,6 +15,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -28,10 +30,12 @@ import java.util.Collections;
 import java.util.List;
 
 /***
- * Entry point for Superheroes application.
+ * Entry point for Superheroes application. Defines all the variables and constants used,
+ * as well as the widgets used. The onCreate method loads the data from a JSON file, and instantiates
+ * the widgets.
  *
  * Written by Jim Burk
- * October 1t6, 2017
+ * October 16, 2017
  */
 
 public class QuizActivity extends AppCompatActivity {
@@ -55,6 +59,8 @@ public class QuizActivity extends AppCompatActivity {
     private TextView mGuessWhatTextView;
     private ImageView mHeroImageView;
     private TextView mAnswerTextView;
+
+    private Animation shakeAnim;
 
     private static final String CHOICES = "pref_quizTypes";
 
@@ -90,6 +96,12 @@ public class QuizActivity extends AppCompatActivity {
 
         resetQuiz();
     }
+
+    /***
+     * The resetQuiz() method sets the number of guesses, correct and total, to zero. It thin creates
+     * a list of superheroes to use in the quiz, and sets the question type text view. It then requests
+     * the next hero to be used.
+     */
 
     public void resetQuiz() {
         int randomPosition;
@@ -190,6 +202,14 @@ public class QuizActivity extends AppCompatActivity {
         }
     }
 
+    /***
+     * When the user makes a guess, this method determines if the guess is correct or not, and displays
+     * the corresponding information. Upon a a correct guess to the last question the score is displayed.
+     * With a wrong answer, the image is "shaken".
+     *
+     * @param v
+     */
+
     public void makeGuess(View v) {
         Button clickedButton = (Button) v;
 
@@ -248,6 +268,8 @@ public class QuizActivity extends AppCompatActivity {
             }
         }
         else {
+            shakeAnim = AnimationUtils.loadAnimation(this, R.anim.shake_anim);
+            mHeroImageView.startAnimation(shakeAnim);
             mAnswerTextView.setText(getString(R.string.incorrect_answer));
             mAnswerTextView.setTextColor(ContextCompat.getColor(this, R.color.incorrect_answer));
             clickedButton.setEnabled(false);

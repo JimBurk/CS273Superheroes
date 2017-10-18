@@ -1,6 +1,9 @@
 package edu.orangecoastcollege.cs273.jburk.cs273superheroes;
 
 /**
+ * This class contains the data for the quiz. Besides the constructors, setters and getters, there is
+ * an "equals" method to compare an answer to a "Superhero".
+ *
  * Created by jimburk on 10/5/17.
  */
 
